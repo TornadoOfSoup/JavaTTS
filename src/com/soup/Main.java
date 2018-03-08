@@ -6,7 +6,7 @@ public class Main {
 
         PhonemeParser parser = new PhonemeParser();
 
-        String parsedString = parser.parse("ship");
+        String parsedString = parser.parse("table");
         System.out.println(parsedString);
 
 
