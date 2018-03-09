@@ -2,12 +2,15 @@ package com.soup;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class PhonemeParser {
 
-    static HashMap<String, String> phonemeMap = new HashMap<String, String>();
-    static HashMap<String, String> suffixMap = new HashMap<String, String>();
-    static HashMap<String, String> specificWordMap = new HashMap<String, String>();
+    static LinkedHashMap<String, String> phonemeMap = new LinkedHashMap<String, String>();
+    static LinkedHashMap<String, String> suffixMap = new LinkedHashMap<String, String>();
+    static LinkedHashMap<String, String> specificWordMap = new LinkedHashMap<String, String>();
+
+    //static final char[] HARD_CONSONANTS = new char[]{};
 
     public PhonemeParser() {
         if (phonemeMap.isEmpty()) {
@@ -27,15 +30,33 @@ public class PhonemeParser {
         phonemeMap.put("ai", "/Ay/");
         phonemeMap.put("ei", "/Ay/");
         //phonemeMap.put("a_e", "/Ay/");
+        phonemeMap.put("airs", "/eh/r/s/");
         phonemeMap.put("aw", "/aw/");
+        phonemeMap.put("aft", "a/f/t/");
 
         phonemeMap.put("ck", "/k/");
         phonemeMap.put("cc", "/k/");
+        phonemeMap.put("cause", "/k/uh/z/");
+
+        phonemeMap.put("ee", "/E/");
+        phonemeMap.put("er", "/er/");
+        //phonemeMap.put("e", "/eh/"); //this might break everything
+        phonemeMap.put("ew", "/OOO/");
+
+        phonemeMap.put("ing", "/i/ng/");
+        phonemeMap.put("in", "/i/n/");
+        phonemeMap.put("irs", "/er/s/");
+        phonemeMap.put("urs", "/er/s/");
 
         phonemeMap.put("ll", "/l/");
 
         phonemeMap.put("ou", "/ou/");
+        phonemeMap.put("ow", "/ou/");
         phonemeMap.put("oo", "/OOO/");
+
+        phonemeMap.put("so", "/s/uh/");
+
+        phonemeMap.put("to", "/t/Oh/");
 
         phonemeMap.put("un", "/uh/n/");
         phonemeMap.put("up", "/uh/p/");
@@ -81,6 +102,8 @@ public class PhonemeParser {
         suffixMap.put("ay", "/Ay/");
         suffixMap.put("ey", "/Ay/");
 
+        suffixMap.put("cause", "k/uh/z/");
+
         suffixMap.put("cide", "/s/Iy/d/");
 
         suffixMap.put("cule", "/k/U/l/");
@@ -91,11 +114,13 @@ public class PhonemeParser {
 
         suffixMap.put("ed", "/d/");
 
+        suffixMap.put("ee", "/E/");
+
         suffixMap.put("en", "/eh/n/");
 
         suffixMap.put("ency", "/eh/n/s/E");
 
-        suffixMap.put("er", "/r/");
+        suffixMap.put("er", "/er/");
 
         suffixMap.put("ese", "/E/z/");
 
@@ -151,6 +176,8 @@ public class PhonemeParser {
         suffixMap.put("like", "/l/Iy/k/");
 
         suffixMap.put("ll", "/l/");
+
+        suffixMap.put("ly", "/l/E/");
 
         suffixMap.put("ment", "/m/eh/n/t/");
 
@@ -215,9 +242,35 @@ public class PhonemeParser {
         specificWordMap.put("me", "m/E/");
         specificWordMap.put("can", "k/a/n/");
         specificWordMap.put("time", "t/Iy/m/");
-        specificWordMap.put("hello", "h/eh/l/o");
+        specificWordMap.put("hello", "h/eh/l/Oh");
         specificWordMap.put("hi", "h/Iy/");
         specificWordMap.put("know", "n/Oh/");
+        specificWordMap.put("into", "i/n/t/OOO/");
+        specificWordMap.put("your", "y/Oh/er/");
+        specificWordMap.put("could", "k/oo/d/");
+        specificWordMap.put("them", "th/eh/m/");
+        specificWordMap.put("other", "uh/th/er/");
+        specificWordMap.put("only", "Oh/n/l/E");
+        specificWordMap.put("come", "k/uh/m");
+        specificWordMap.put("its", "i/t/s/");
+        specificWordMap.put("it's", "i/t/s/");
+        specificWordMap.put("over", "Oh/v/er/");
+        specificWordMap.put("also", "aw/l/s/Oh/");
+        specificWordMap.put("use", "u/s/");
+        specificWordMap.put("two", "t/OOO/");
+        specificWordMap.put("work", "w/er/k/");
+        specificWordMap.put("bork", "b/Oh/r/k/");
+        specificWordMap.put("well", "w/eh/l/");
+        specificWordMap.put("tell", "t/eh/l/");
+        specificWordMap.put("even", "E/v/eh/n/");
+        specificWordMap.put("any", "eh/n/E/");
+        specificWordMap.put("most", "m/Oh/s/t/");
+        specificWordMap.put("us", "uh/s/");
+        specificWordMap.put("open", "Oh/p/eh/n/");
+        specificWordMap.put("through", "th/r/OOO/");
+        specificWordMap.put("fire", "f/Iy/r/");
+        specificWordMap.put("head", "h/eh/d/");
+        specificWordMap.put("today", "t/OOO/d/Ay/");
 
         specificWordMap.put("the", "th/uh/");
         specificWordMap.put("able", "Ay/b/l/");
@@ -225,6 +278,7 @@ public class PhonemeParser {
         specificWordMap.put("i", "Iy/");
         specificWordMap.put("let", "l/eh/t/");
         specificWordMap.put("butterwhales", "b/uh/t/er/hw/Ay/l/s/");
+        specificWordMap.put("satan", "s/Ay/t/eh/n/");
 
     }
 
@@ -245,8 +299,9 @@ public class PhonemeParser {
     }
 
     private String parseWord(String word) {
-        String parsedWord = word;
+        String parsedWord = word.trim();
         boolean hasSuffix = false;
+        boolean hasSilentE = false;
 
         ParseResult specificWordResult = parseSpecificWord(word);
         if (specificWordResult.isChanged()) {
@@ -265,6 +320,7 @@ public class PhonemeParser {
                 if (word.length() > 3) {
                     if (word.endsWith("e") && !word.endsWith("ee")) {
                         parsedWord = parsedWord.substring(0, word.length() - 1);
+                        hasSilentE = true;
                     }
                 }
 
@@ -284,6 +340,8 @@ public class PhonemeParser {
                     parsedWord = parsedWord.substring(0, parsedWord.length() - 1) + "/p/";
                 } else if (parsedWord.endsWith("l")) {
                     parsedWord = parsedWord.substring(0, parsedWord.length() - 1) + "/l/";
+                } else if (parsedWord.endsWith("o")) {
+                    parsedWord = parsedWord.substring(0, parsedWord.length() - 1) + "/Oh/";
                 }
 
                 if (parsedWord.endsWith("ff")) {
@@ -320,11 +378,24 @@ public class PhonemeParser {
                 parsedWord = parsedWord.replaceFirst("t", "/t/");
             }
 
+            if (parsedWord.startsWith("al")) {
+                parsedWord = parsedWord.replaceFirst("al", "/aw/l/");
+            } else if (parsedWord.startsWith("a")) {
+                //todo figure something out here
+            }
+
             if (parsedWord.startsWith("fr")) {
                 parsedWord = parsedWord.replaceFirst("fr", "/f/r/");
             } else if (parsedWord.startsWith("f")) {
                 parsedWord = parsedWord.replaceFirst("f", "/f/");
             }
+
+            if (parsedWord.startsWith("gr")) {
+                parsedWord = parsedWord.replaceFirst("gr", "/g/r/");
+            } else if (parsedWord.startsWith("g")) {
+                parsedWord = parsedWord.replaceFirst("g", "/g/");
+            }
+
 
             if (parsedWord.startsWith("b")) {
                 parsedWord = parsedWord.replaceFirst("b", "/b/");
@@ -346,6 +417,10 @@ public class PhonemeParser {
 
             if (parsedWord.startsWith("n")) {
                 parsedWord = parsedWord.replaceFirst("n", "/n/");
+            }
+
+            if (parsedWord.startsWith("m")) {
+                parsedWord = parsedWord.replaceFirst("m", "/m/");
             }
 
             if (parsedWord.startsWith("h")) {
@@ -381,8 +456,13 @@ public class PhonemeParser {
 
             for (String phoneme : phonemeMap.keySet()) {
                 if (parsedWord.contains(phoneme)) {
+                    //todo something to check if it's editing something that's already been edited
                     parsedWord = parsedWord.replace(phoneme, phonemeMap.get(phoneme));
                 }
+            }
+
+            if (hasSilentE) {
+                //do things with silent E knowledge
             }
 
 
