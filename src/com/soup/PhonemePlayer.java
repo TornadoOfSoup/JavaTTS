@@ -21,7 +21,7 @@ public class PhonemePlayer {
     public void play() {
         for (String phoneme : phonemes) {
             if (!phoneme.isEmpty() && !phoneme.equals(" ")) {
-                playPhoneme("phenomes/" + phoneme + ".wav");
+                playPhoneme("phenomes/" + phoneme.trim() + ".wav");
             }
         }
     }
@@ -38,7 +38,7 @@ public class PhonemePlayer {
             clip.open(stream);
             clip.start();
 
-            while(clip.getFrameLength() > clip.getFramePosition() + 100) { }
+            while(clip.getFrameLength() > clip.getFramePosition() + 200) { }
         }
         catch (Exception e) {
             e.printStackTrace();
